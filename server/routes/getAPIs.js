@@ -12,9 +12,9 @@ router.get("/api/top-skills", async (req, res) => {
 
 //function to load top industry skills.
 async function loadIndustrySkills(industry) {
-  const uri =
+  const url =
     "mongodb+srv://user1:gottago@cluster0.vlkxw.mongodb.net/myFirstDatabase";
-  const client = await mongodb.MongoClient.connect(uri, {
+  const client = await mongodb.MongoClient.connect(url, {
     useNewUrlParser: true,
   });
 
@@ -45,20 +45,19 @@ async function loadIndustrySkills(industry) {
 //   res.send(data);
 // });
 
-//Get the industry growth based on the Country and Industry
-
+//API route for industry growth data
 router.get("/api/ind-growth", async (req, res) => {
   let country = req.query.country; // Example: " ?ind=Banking "
   let industry = req.query.industry;
-  console.log(country, industry);
   const data = await loadGrowthRates(country.toString(), industry.toString());
   res.send(data);
 });
 
+//return growth rate data from MongoDB (single object)
 async function loadGrowthRates(country, industry) {
-  const uri =
+  const url =
     "mongodb+srv://user1:gottago@cluster0.vlkxw.mongodb.net/myFirstDatabase";
-  const client = await mongodb.MongoClient.connect(uri, {
+  const client = await mongodb.MongoClient.connect(url, {
     useNewUrlParser: true,
   });
 
@@ -77,9 +76,9 @@ router.get("/api/industry-name-list", async (req, res) => {
 });
 
 async function loadIndustryNameList() {
-  const uri =
+  const url =
     "mongodb+srv://user1:gottago@cluster0.vlkxw.mongodb.net/myFirstDatabase";
-  const client = await mongodb.MongoClient.connect(uri, {
+  const client = await mongodb.MongoClient.connect(url, {
     useNewUrlParser: true,
   });
 
@@ -93,6 +92,33 @@ async function loadIndustryNameList() {
   for (let i = 0; i < list.length; i++) {
     if (!uniqueList.includes(list[i].industry_name)) {
       uniqueList.push(list[i].industry_name);
+    }
+  }
+  return uniqueList;
+}
+
+router.get("/api/country-name-list", async (req, res) => {
+  const data = await loadCountryNameList();
+  res.send(data);
+});
+
+async function loadCountryNameList() {
+  const url =
+    "mongodb+srv://user1:gottago@cluster0.vlkxw.mongodb.net/myFirstDatabase";
+  const client = await mongodb.MongoClient.connect(url, {
+    useNewUrlParser: true,
+  });
+
+  const list = await client
+    .db("myFirstDatabase")
+    .collection("industrygrowthrates")
+    .find({})
+    .toArray();
+
+  const uniqueList = [];
+  for (let i = 0; i < list.length; i++) {
+    if (!uniqueList.includes(list[i].country_name)) {
+      uniqueList.push(list[i].country_name);
     }
   }
   return uniqueList;
