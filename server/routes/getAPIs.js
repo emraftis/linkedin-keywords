@@ -28,10 +28,7 @@ async function loadIndustrySkills(industry) {
   const skillList = [];
   for (let i = 0; i < objectList.length; i++) {
     if (!skillList.includes(objectList[i].skill_group_name)) {
-      skillList.push(
-        objectList[i].skill_group_name
-        // skillCategory: objectList[i].skill_group_category,
-      );
+      skillList.push(objectList[i].skill_group_name);
     }
   }
   return skillList;
